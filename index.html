@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Optimizador de Battle Cats — sabé exactamente cuándo tirar y cuánto cat food gastar" />
+  <title>MejoraBC — Optimizador Battle Cats</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<header>
+  <h1>MejoraBC</h1>
+  <p>Ingresá tus últimos pulls → sabé exactamente cuándo tirar</p>
+</header>
+
+<main>
+
+  <!-- ══════════════════════════════════════════════════════
+       SCREEN 1 — Entry
+  ══════════════════════════════════════════════════════ -->
+  <div id="screen-entry" class="screen active">
+
+    <!-- Pull history input -->
+    <div class="card">
+      <h2>¿Qué obtuviste en tus últimos pulls?</h2>
+      <p style="font-size:0.82rem;color:var(--muted);margin-bottom:14px;">
+        Tocá en orden los resultados de tus últimos 2–5 pulls de la cápsula.
+      </p>
+
+      <div class="rarity-grid">
+        <button class="rarity-btn" data-rarity="uber">★ Uber Rare</button>
+        <button class="rarity-btn" data-rarity="super">◆ Super Rare</button>
+        <button class="rarity-btn" data-rarity="rare">● Rare</button>
+        <button class="rarity-btn" data-rarity="normal">○ Normal</button>
+      </div>
+
+      <div style="height:12px"></div>
+
+      <span id="selected-count">0 pulls ingresados</span>
+      <div id="pulls-display"></div>
+
+      <div style="height:10px"></div>
+      <button class="btn btn-ghost" id="btn-clear-pulls">Limpiar</button>
+    </div>
+
+    <!-- Cat food -->
+    <div class="card">
+      <h2>Cat food disponible</h2>
+      <div class="cf-row">
+        <label for="cf-input">Tengo</label>
+        <input class="input-field" id="cf-input" type="number" min="150" step="150" value="1500" />
+        <label>cat food</label>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <button class="btn btn-primary" id="btn-analyze" disabled>
+      Analizar mis pulls
+    </button>
+
+    <button class="btn btn-secondary hidden" id="btn-use-saved">
+      Usar seed guardado
+    </button>
+
+    <!-- Advanced: enter seed directly -->
+    <a href="#" id="toggle-seed" style="text-align:center;display:block;font-size:0.8rem;color:var(--muted)">
+      Ya sé mi seed → ingresarlo manualmente
+    </a>
+
+    <div id="seed-input-wrap" class="card hidden">
+      <div class="input-group">
+        <label for="seed-direct">Seed (número)</label>
+        <input class="input-field" id="seed-direct" type="number" placeholder="ej: 1319501353" />
+      </div>
+      <div style="height:8px"></div>
+      <p style="font-size:0.75rem;color:var(--muted)">
+        Podés obtener tu seed en
+        <a href="https://bc-seek.godfat.org" target="_blank" rel="noopener">bc-seek.godfat.org</a>
+      </p>
+    </div>
+
+  </div><!-- /screen-entry -->
+
+
+  <!-- ══════════════════════════════════════════════════════
+       SCREEN 2 — Loading
+  ══════════════════════════════════════════════════════ -->
+  <div id="screen-loading" class="screen">
+    <div class="loading-center">
+      <div>
+        <div id="progress-pct">0%</div>
+        <div id="progress-text">Buscando tu seed...</div>
+      </div>
+      <div class="progress-wrap" style="width:100%">
+        <div id="progress-bar"></div>
+      </div>
+      <p>Esto tarda ~10 segundos.<br>No cierres la app.</p>
+    </div>
+  </div><!-- /screen-loading -->
+
+
+  <!-- ══════════════════════════════════════════════════════
+       SCREEN 3 — Results
+  ══════════════════════════════════════════════════════ -->
+  <div id="screen-results" class="screen">
+
+    <!-- Main recommendation card -->
+    <div class="card" id="result-card">
+      <div id="result-msg">Calculando...</div>
+      <div id="result-detail"></div>
+      <div id="result-seed"></div>
+    </div>
+
+    <!-- Recalculate with different budget -->
+    <div class="card">
+      <h3>Cambiar presupuesto</h3>
+      <div class="cf-row">
+        <label for="cf-results">Cat food</label>
+        <input class="input-field" id="cf-results" type="number" min="150" step="150" value="1500" />
+        <button class="btn btn-secondary" id="btn-recalculate" style="width:auto;padding:0 16px;min-height:44px">
+          Recalcular
+        </button>
+      </div>
+    </div>
+
+    <!-- Timeline -->
+    <div class="card">
+      <h3>Próximos 30 pulls</h3>
+      <div id="pull-timeline"></div>
+      <div style="height:8px"></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;font-size:0.72rem;color:var(--muted)">
+        <span style="color:var(--gold)">★ Uber</span>
+        <span style="color:var(--orange)">◆ Super</span>
+        <span style="color:var(--blue)">● Rare</span>
+        <span style="color:var(--muted)">○ Normal</span>
+      </div>
+    </div>
+
+    <!-- Uber list -->
+    <div class="card">
+      <h3>Próximos Uber Rares</h3>
+      <div id="uber-list"></div>
+    </div>
+
+    <!-- Candidates note -->
+    <div id="candidates-note" style="display:none"></div>
+
+    <!-- Navigation -->
+    <button class="btn btn-secondary" id="btn-back">
+      ← Volver a ingresar pulls
+    </button>
+
+    <button class="btn btn-danger" id="btn-forget-seed">
+      Olvidar seed guardado
+    </button>
+
+  </div><!-- /screen-results -->
+
+</main>
+
+<script type="module" src="js/ui.js"></script>
+</body>
+</html>
